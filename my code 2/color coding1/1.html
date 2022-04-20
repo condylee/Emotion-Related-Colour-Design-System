@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script>
+		var selector = d3.select("#drop")
+		    .append("select")
+		    .attr("id","dropdown")
+		    .on("change", function(d){
+		        selection = document.getElementById("dropdown");
+		                if (selection== "RegularSeasonQbRating"){
+		        y1.domain([1, d3.max(data, function(d){
+		            return +d[selection.value];})]);
+		
+		        yAxis.scale(y1);
+		
+		        d3.selectAll(".rectangle")
+		            .transition()
+		            .attr("height", function(d){
+		                return height - y1(+d[selection.value]);
+		            })
+		            .attr("x", function(d, i){
+		                return (width / data.length) * i ;
+		            })
+		            .attr("y", function(d){
+		                return y1(+d[selection.value]);
+		            })
+		            .ease("linear")
+		            .select("title")
+		            .text(function(d){
+		                return d.Year+ " "+ d.SuperBowlD+ "cool "+ d[selection.value];
+		            });
+		
+		        d3.selectAll("g.y.axis")
+		            .transition()
+		            .call(yAxis);}
+		      else{
+		        y.domain([1, d3.max(data, function(d){
+		            return +d[selection.value];})]);
+		
+		        yAxis.scale(y);
+		
+		        d3.selectAll(".rectangle")
+		            .transition()
+		            .attr("height", function(d){
+		                return height - y(+d[selection.value]);
+		            })
+		            .attr("x", function(d, i){
+		                return (width / data.length) * i ;
+		            })
+		            .attr("y", function(d){
+		                return y(+d[selection.value]);
+		            })
+		            .ease("linear")
+		            .select("title")
+		            .text(function(d){
+		                return d.Year+ " "+ d.SuperBowlD+ "  "+ d[selection.value];
+		            });
+		
+		        d3.selectAll("g.y.axis")
+		            .transition()
+		            .call(yAxis);}
+		
+		     });
+	</script>>
+</html>

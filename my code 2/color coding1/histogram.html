@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> histogram equalization 初代
+		</title>
+	</head>
+	<body>
+		<div id="test-svg">
+		</div>
+	</body>
+	<script src="https://d3js.org/d3.v4.js">
+	</script>
+	<script>
+	        var height = 600;
+	        var width = 600;
+	        var dataset= [35,20,45,12,21,28,46,64,73,78,54,20,21,22,23,24,4,3,5,2,3,10,11,14];
+	       // var num = 15;
+			
+	       /* for(var i = 0; i < 4; i++){
+	            var tempnum = Math.floor(Math.random() * 50);
+	            dataset.push(tempnum);
+	        }
+	*/
+	      
+	
+	        var svg = d3.select("body").append("svg")
+	                .attr("width", width)
+	                .attr("height", height);
+	
+	
+	
+	/*var xScale = d3.scaleOrdinal()
+		.domain(datax)
+		.range([100, 200, 300]);
+	var xAxis = d3.axisBottom()
+		.scale(xScale)
+		.tickSize(10);
+		
+		var yScale = d3.scaleLinear()
+		    .domain([0,d3.max(dataset)])
+		    .range([height - padding.top - padding.bottom, 0]);
+		var yAxis = d3.axisLeft()
+				.scale(yScale);
+		
+		
+		*/
+	        var xAxisScale =  d3.scaleBand()
+	                .domain(d3.range(dataset.length))
+	                .rangeRound([0, 500]);
+	        console.log(dataset.length)
+	        var yAxisScale =  d3.scaleLinear()
+	                .domain([0, d3.max(dataset)])
+	                .range([500, 0]);
+	
+	        var xAxis = d3.axisBottom()
+						.scale(xAxisScale)
+						.tickSize(10);
+	        var yAxis =d3.axisLeft().scale(yAxisScale);
+	
+	svg.append("g")
+	.call(yAxisScale)
+	.append("text")
+	.text("Cured Patient")
+	.attr("transform","rotate(-90)")//text旋转-90°
+	.attr("text-anchor","end")//字体尾部对齐
+	.attr("dy","8em")
+	.attr("dx","-4em")
+	
+
+	
+	//下面这一段是对应data的绑定。影响的是长方体等
+	        var xScale = d3.scaleBand()
+	                .domain(d3.range(dataset.length))
+	                .rangeRound([0,500],0.05);
+	
+	        var yScale = d3.scaleLinear()
+	                .domain([0,d3.max(dataset)])
+	                .range([0,500]);
+	
+	
+	////*************以下是"颜色插值函数"
+	var palegreen = d3.rgb(66,251,75);	//浅绿
+	var darkgreen = d3.rgb(2,100,7);//深绿
+	console.log(darkgreen)
+	 
+	var color0 = d3.interpolate(palegreen,darkgreen);		//颜色插值函数
+	var linear0 = d3.scaleLinear()
+			.domain([20, 90])
+			.range([0, 1]);
+			
+	//以下是python计算得出的数据分布数值。
+	var a1=0.375;
+	var a2=0.7083;
+	var a3=0.8333;
+	var a4=0.875;
+	var a5=1;
+	
+	
+	
+	
+	var col1=color0(a1);
+	console.log(col1);
+	var color1=d3.interpolate(palegreen,col1);
+	
+	var col2=color0(a2);
+	console.log(col2);
+	var color2=d3.interpolate(col1,col2);
+	
+	var col3=color0(a3);
+	console.log(col3);
+	var color3=d3.interpolate(col2,col3);
+	
+	var col4=color0(a4);
+	console.log(col4);
+	var color4=d3.interpolate(col3,col4);
+	
+	var col5=color0(a5);
+	console.log(col5);
+	var color5=d3.interpolate(col4,darkgreen);
+
+	var lin1=d3.scaleLinear()
+			.domain([2, 14])
+			.range([0, 1]);
+	var lin2=d3.scaleLinear()
+			.domain([20, 28])
+			.range([0, 1]);	
+	var lin3=d3.scaleLinear()
+			.domain([35, 46])
+			.range([0, 1]);	
+	var lin4=d3.scaleLinear()
+			.domain([46,54])
+			.range([0, 1]);	
+	var lin5=d3.scaleLinear()
+			.domain([64, 78])
+			.range([0, 1]);	
+	//************//
+	
+	
+	        svg.selectAll("rect")
+	                .data(dataset)
+	                .enter()
+	                .append("rect")
+	                .on("click",  function(){
+	                    d3.select(this).attr("fill","green");
+	                })
+	                .attr("x", function(d,i){
+	                    return 100 + xScale(i);
+	                } )
+	                .attr("y",function(d,i){
+	                    return 50 + 500 - yScale(d) ;
+	                })
+	                .attr("width", function(d,i){
+	                    return xScale.bandwidth();
+	                })
+	                .attr("height",yScale)
+	                .attr("fill", function(d){
+						if(d>0 && d<=14)
+	                    {return color1(lin1(d)) ;}
+						else if (d>14 && d<=28)
+						{return color2(lin2(d));}
+						else if (d>28 && d<=46)
+						{return color3(lin3(d));}
+						else if (d>46 && d<=54)
+						{return color4(lin4(d));}
+						else if (d>54 && d<=78)
+						{return color5(lin5(d));}
+						
+						})
+					.attr("stroke", "white")
+	                // .transition()
+	                // .duration(2000)
+	                // .ease("bounce")
+	                // .delay(1000)
+	                // .attr("fill","green");
+	
+	        svg.selectAll("text")
+	                .data(dataset)
+					
+	                .enter()
+					.append("text")
+	                .attr("x", function(d,i){
+						//console.log(d);
+	                    return 100 + xScale(i);
+	                } )
+	                .attr("y",function(d,i){
+	                    return 50 + 500 - yScale(d) ;
+	                })
+	                .attr("dx", function(d,i){
+	                    return xScale.bandwidth()/3-3;
+	                })
+	                .attr("dy", 14)
+	                .attr("text-anchor", "begin")
+	                .attr("font-size", 12)
+	                .attr("fill","white")
+	                .text(function(d,i){
+						//console.log(d);
+	                    return d;
+						
+	                });
+	
+	        svg.append("g")
+	                .attr("class","axis")
+	                .attr("transform","translate(100,550)")
+	                .call(xAxis);
+	
+	        svg.append("g")
+	                .attr("class","axis")
+	                .attr("transform","translate(100,50)")
+	                .call(yAxis);
+	    </script>
+</html>
